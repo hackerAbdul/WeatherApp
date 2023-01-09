@@ -1,20 +1,46 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import axios from 'axios';
 import './App.css';
-import key from './assets/key'
 
 function App() {
 
-  const [data,setData] = useState({})
+  console.log(`${process.env.REACT_APP_API_KEY}`)
+
+  const fetchData = () =>{
+    axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${defaultLocation}&appid=${process.env.REACT_APP_API_KEY}`).then((response) =>{
+      setData(response.data)
+      console.log(response.data)
+    })
+  }
+
+  const [data,setData] = useState({fetchData})
   const [location, setLocation] = useState('')
-  // const [country, setCountry] = useState('')
+
+  //render default api call
+  useEffect(() =>{
+    fetchData();
+  }, [])
+  
+  const defaultLocation = "London"
 
   
-  // const url = `https://api.openweathermap.org/data/2.5/weather?q=${location},${country}&appid=9c635a90c6d2d9352ee769c425d53ab6`
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=9c635a90c6d2d9352ee769c425d53ab6`
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${process.env.REACT_APP_API_KEY}`
   
+  
+
+  //function to return api call depending on the search
   function searchBar(event){
-    if (event.key === 'Enter'){
+
+    console.log(typeof location)
+    if(event.key === 'Enter' && location.trim()=== ""){
+      console.log("the location is " + "London")
+      
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${defaultLocation}&appid=${process.env.REACT_APP_API_KEY}`).then((response) =>{
+        setData(response.data)
+        console.log(response.data)
+      })
+      setLocation('')
+    }else if (event.key === 'Enter'){
       axios.get(url).then((response) =>{
         setData(response.data)
         console.log(response.data)
@@ -22,17 +48,13 @@ function App() {
       setLocation('')
       // setCountry('')
     }
-    
   } 
 
-  
+  //function to change temp from kelvin to celsius
   function celsius(temp){
     let res = Math.floor(temp-273.15)
-    
-
     return res
   }
-
 
   return (
     <div className="app">
@@ -51,29 +73,33 @@ function App() {
             <p>{data.name}</p>
             </div>
           <div className='country'>
-            <p>{data.sys.country}</p>
+            {data.sys ? <p>{data.sys.country}</p> : null}
           </div>
           <div className='temp'>
-            <h1>{celsius(data.main.temp)}°C</h1>
+            {data.main ? <h1>{celsius(data.main.temp)}°C</h1> : null}
           </div>
           <div className='description'>
-            <p>{data.weather[0].main}</p>
+            {data.weather ? <p>{data.weather[0].main}</p> : null}
           </div>
         </div>
-        <div className='bottom'>
+
+        {data.name !== undefined &&
+          <div className='bottom'>
           <div className='feels'>
             <p>Feels Like</p>
-            <p>{celsius(data.main.feels_like)}</p>
+            {data.main ? <p>{celsius(data.main.feels_like)}</p> : null}
           </div>
           <div className='humidity'>
             <p>Humidity</p>
-            <p>{data.main.humidity}%</p>
+            {data.main ? <p>{data.main.humidity}%</p> : null}
           </div>
           <div className='wind'>
             <p>Wind Speed</p>
-            <p>{data.wind.speed}</p>
+            {data.wind ? <p>{Math.floor(data.wind.speed)}MPH</p> :null}
           </div>
         </div>
+        }
+        
       </div>
     </div>
   );
