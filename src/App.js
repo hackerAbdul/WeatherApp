@@ -42,7 +42,6 @@ function App() {
         console.log(response.data)
       }).catch((err)=>{
         if(err.response.status === 404){
-          console.log("invalid city")
           alert("Invalid City")
         }
       })

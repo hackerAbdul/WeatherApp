@@ -88,6 +88,10 @@ h1{
   color: white;
 }
 
+.wrong{
+  background-color: red;
+}
+
 ::placeholder{
   color: white;
 }
