@@ -4,8 +4,8 @@ import './App.css';
 
 function App() {
 
-  console.log(`${process.env.REACT_APP_API_KEY}`)
 
+  //renders response for london upon starting/refreshing page
   const fetchData = () =>{
     axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${defaultLocation}&appid=${process.env.REACT_APP_API_KEY}`).then((response) =>{
       setData(response.data)
@@ -30,11 +30,7 @@ function App() {
 
   //function to return api call depending on the search
   function searchBar(event){
-
-    console.log(typeof location)
-    if(event.key === 'Enter' && location.trim()=== ""){
-      console.log("the location is " + "London")
-      
+    if(event.key === 'Enter' && location.trim()=== ""){      
       axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${defaultLocation}&appid=${process.env.REACT_APP_API_KEY}`).then((response) =>{
         setData(response.data)
         console.log(response.data)
@@ -44,6 +40,11 @@ function App() {
       axios.get(url).then((response) =>{
         setData(response.data)
         console.log(response.data)
+      }).catch((err)=>{
+        if(err.response.status === 404){
+          console.log("invalid city")
+          alert("Invalid City")
+        }
       })
       setLocation('')
       // setCountry('')
@@ -54,6 +55,21 @@ function App() {
   function celsius(temp){
     let res = Math.floor(temp-273.15)
     return res
+  }
+
+  function timezone(time){
+
+    let newTime = 0
+
+    if (parseFloat(time) >= 0){
+      
+      newTime = (new Date(data.dt*1000+(data.timezone*1000)))
+    }else{
+      newTime = (new Date(data.dt*1000+(data.timezone*1000)));
+    }
+
+    return newTime.getHours().toString().padStart(2, "0") +":"+ newTime.getMinutes().toString().padStart(2, "0");
+    
   }
 
   return (
@@ -80,6 +96,9 @@ function App() {
           </div>
           <div className='description'>
             {data.weather ? <p>{data.weather[0].main}</p> : null}
+          </div>
+          <div className='description'>
+            {data.weather ? <p>Last Checked {timezone(data.timezone)}</p> : null}
           </div>
         </div>
 
