@@ -56,6 +56,7 @@ function App() {
     return res
   }
 
+
   function timezone(time){
 
     let newTime = 0
@@ -90,8 +91,13 @@ function App() {
           <div className='country'>
             {data.sys ? <p>{data.sys.country}</p> : null}
           </div>
-          <div className='temp'>
-            {data.main ? <h1>{celsius(data.main.temp)}°C</h1> : null}
+          <div className='flexbox'>
+            <div className='temp'>
+              {data.main ? <h1>{celsius(data.main.temp)}°C</h1> : null}
+            </div>
+            <div className='temp'>
+              {data.main ? <img src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`} alt={data.weather[0].description}/> : null}
+            </div>
           </div>
           <div className='description'>
             {data.weather ? <p>{data.weather[0].main}</p> : null}

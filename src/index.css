@@ -74,6 +74,11 @@ h1{
   font-weight: 700;
 }
 
+.flexbox{
+  display: flex;
+  justify-content: space-between;
+}
+
 .app .search{
   text-align: center;
   padding: 1rem;
